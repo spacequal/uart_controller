@@ -31,7 +31,7 @@ module uart_test();
 		#5 clk=~ clk;
 	end
 
-	uart u0(#.baud_threshold(4'h3)
+	uart #(.BAUD_THRESHOLD(4)) u0(
 		.clk(clk),
 		.rst(rst),
 		.tx_data(tx_data),

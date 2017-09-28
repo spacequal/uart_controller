@@ -15,8 +15,8 @@ module uart(
 	output reg  [10:0] ctr             
 	);
 
-//	parameter          baud_threshold ;
-	reg         [ 7:0] tx_buffer      ;
+	parameter          BAUD_THRESHOLD= 10;
+	reg         [ 7:0] tx_buffer         ;
 
 	//Module Initial Values
 	task reset; 
@@ -63,12 +63,12 @@ module uart(
 		end else begin
 			tx<= 1;
 		end
+
+		//Stage increment (BAUD rate)
+		if(ctr== BAUD_THRESHOLD) begin
+			stage<= stage+1'b1;
+			ctr<= 0;
+		end
 	end
 	//END PRIMARY BLOCK
-
-	//Stage increment block at BAUD rate.
-	always @ (posedge ctr[2]) begin
-		stage<= stage+ 1'b1;
-		ctr<= 0;
-	end
 endmodule
