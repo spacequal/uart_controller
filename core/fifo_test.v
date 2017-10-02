@@ -20,11 +20,17 @@ module uart_test();
 		rst  = 1;
 		rd_en= 0;
 		wr_en= 0;
+
+		//Non-concurrent store and readout test
 		#10    rst= 0;
 		#20    wr_en= 1;
 		#30    wr_en= 0;
 		#100   rd_en= 1;
 		#140   rd_en= 0;
+		#148   rd_en= 1;
+		#149   rd_en= 0;
+
+		//Concurrent readout test
 		#200   wr_en= 1;
 		#200   rd_en= 1;
 		#1000  $finish;
@@ -36,7 +42,10 @@ module uart_test();
 
 	always @ (posedge clk) begin
 		idata<= idata+ 1'b1;
-		if(rd_en & ~empty) begin
+		if(idata> 8'hf) begin
+			rd_en<= ~rd_en;
+		end
+		if(~empty) begin
 			omem<= odata;
 		end
 	end
@@ -46,7 +55,7 @@ module uart_test();
 		.clk(clk),
 		.idata(idata),
 		.odata(odata),
-		.rd_en(rd_en),
+		.next(rd_en),
 		.wr_en(wr_en),
 		.full(full),
 		.empty(empty)
